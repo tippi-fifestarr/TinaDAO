@@ -31,7 +31,7 @@ async function main() {
   for (let i = 0; i < process.env.MAX_SUPPLY; ++i) {
     let metadata = metadataTemplate;
     metadata.name = `${process.env.ARG_NAME} #${i}`;
-    metadata.image = cid;
+    metadata.image = `https://gateway.pinata.cloud/ipfs/${cid.toString()}`;
     fs.writeFileSync(`${UNREVEALED_DIR}/${i}`, JSON.stringify(metadata));
   }
 
@@ -57,7 +57,7 @@ async function main() {
     if (item.path === "") {
       console.log(`Folder CID: ${item.cid}`);
       let configFile = JSON.parse(fs.readFileSync(CONFIG_PATH));
-      configFile.UNREVEALED_BASEURI = `ipfs://${item.cid}`;
+      configFile.UNREVEALED_BASEURI = `ipfs://${item.cid}/`;
       fs.writeFileSync(CONFIG_PATH, JSON.stringify(configFile));
     }
 

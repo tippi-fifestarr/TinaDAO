@@ -97,7 +97,7 @@ async function main() {
     if (item.path === "") {
       console.log(`Folder CID: ${item.cid}`);
       let configFile = JSON.parse(fs.readFileSync(CONFIG_PATH));
-      configFile.REVEALED_BASEURI = `ipfs://${item.cid}`;
+      configFile.REVEALED_BASEURI = `ipfs://${item.cid}/`;
       fs.writeFileSync(CONFIG_PATH, JSON.stringify(configFile));
     }
   }

@@ -43,13 +43,17 @@ contract TinaDAO is Ownable, ERC721A, EIP712 {
     // The base link that leads to the image / video of the token
     string private baseTokenURI;
 
+    string private _contractURI = "https://arweave.net/VF34QWIaINKcTeNXutDK-NBkNBqVj5o5qelc6EQ3GaQ";
+
     struct MinterInfo {
         uint8 stageId;
-        uint8 remain;
+        uint8 maxMintCount;
     }
 
     // Stage ID check
     mapping(address => MinterInfo) private _whitelistInfo;
+
+    mapping(address => uint256) public _mintedCounts;
 
     // voucher for user to redeem
     struct NFTVoucher {
@@ -68,8 +72,12 @@ contract TinaDAO is Ownable, ERC721A, EIP712 {
         baseTokenURI = _baseTokenURI;
     }
 
-    function contractURI() public pure returns (string memory) {
-        return "https://arweave.net/A8nPwcznZSHbAbarCY22aBhd6tIt0HCQxLwykkeifjs";
+    function contractURI() public view returns (string memory) {
+        return _contractURI;
+    }
+
+    function setNewContractURI(string memory _newURI) external onlyOwner {
+        _contractURI = _newURI;
     }
 
     /// @notice Whitelist mint using the voucher
@@ -80,27 +88,27 @@ contract TinaDAO is Ownable, ERC721A, EIP712 {
     ) external payable {
         MinterInfo storage minterInfo = _whitelistInfo[_msgSender()];
         // if haven't redeemed then redeem first
-        if (minterInfo.stageId < stageInfo.stageId) {
+        if (minterInfo.stageId <= stageInfo.stageId) {
             // make sure that the signer is authorized to mint NFTs
             _verify(voucher, signature);
             // check current stage
             require(voucher.stageId == stageInfo.stageId, "Wrong stage");
             // update minter info
             minterInfo.stageId = voucher.stageId;
-            minterInfo.remain = voucher.amount;
+            minterInfo.maxMintCount = voucher.amount;
         }
 
         // check time
         require(block.timestamp >= stageInfo.startTime, "Sale not started");
         require(block.timestamp <= stageInfo.endTime, "Sale already ended");
-        // check if enough remain
-        require(amount <= minterInfo.remain, "Not enough remain");
+        // check if enough maxMintCount
+        require(amount <= minterInfo.maxMintCount - _mintedCounts[_msgSender()], "Not enough maxMintCount");
         // check if exceed
         require(totalSupply() + amount <= stageInfo.maxSupply, "Exceed stage max supply");
         // check fund
         require(msg.value >= stageInfo.mintPrice * amount, "Not enough fund");
         super._safeMint(_msgSender(), amount);
-        minterInfo.remain -= amount;
+        _mintedCounts[_msgSender()] += amount;
     }
 
     /// @notice Public mint
