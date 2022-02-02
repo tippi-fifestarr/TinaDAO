@@ -21,7 +21,7 @@ arkb deploy <path_to_file>
 ```shell
 brew install ipfs
 ipfs init
-npx hardhat run scripts/ipfsUpload.js
+npx hardhat run scripts/ipfsUploadUnrevealed.js
 ```
 
 ## Running the Project (Rinkeby testnet)

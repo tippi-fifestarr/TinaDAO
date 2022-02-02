@@ -8,12 +8,17 @@ module.exports = {
   parseEther(ether) {
     return utils.parseEther(ether);
   },
-  createFolderIfNotExistAndReset(folderName) {
-    if (!fs.existsSync(folderName)) {
-      fs.mkdirSync(folderName);
+  createFolderIfNotExistAndReset(folderPath) {
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath);
     } else {
-      fs.rmSync(folderName, { recursive: true });
-      fs.mkdirSync(folderName);
+      fs.rmSync(folderPath, { recursive: true });
+      fs.mkdirSync(folderPath);
+    }
+  },
+  removeFile(filePath) {
+    if (fs.existsSync(filePath)) {
+      fs.rmSync(filePath);
     }
   },
 };

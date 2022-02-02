@@ -23,12 +23,12 @@ async function main() {
     fs.readFileSync("./scripts/metadata-template.json")
   );
 
-  console.log("Metadata created:", metadataTemplate);
+  console.log("Metadata template:", metadataTemplate);
 
   createFolderIfNotExistAndReset(UNREVEALED_DIR);
 
-  for (let i = 0; i < 1; ++i) {
-    // for (let i = 0; i < process.env.MAX_SUPPLY; ++i) {
+  for (let i = 0; i < process.env.MAX_SUPPLY; ++i) {
+    // for (let i = 0; i < 5; ++i) {
     let metadata = metadataTemplate;
     metadata.name = `${process.env.ARG_NAME} #${i}`;
     metadata.image = cid;
@@ -55,9 +55,7 @@ async function main() {
   for await (const item of files) {
     // Print the directory hash
     if (item.path === "") {
-      console.log(
-        `Check the uploaded folder at: https://ipfs.io/ipfs/${item.cid}`
-      );
+      console.log(`Folder CID: ${item.cid}`);
     }
 
     // item.cid;
