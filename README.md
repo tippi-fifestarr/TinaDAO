@@ -1,9 +1,21 @@
 # TinaDAO NFT
 
+## Node Version
+
+It is recommended to use Node version 16
+
+```shell
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+# Then edit ~/.bashrc as the command prompt suggests
+nvm install 16
+nvm use 16
+node --version
+```
+
 ## Install Dependencies
 
 ```shell
-yarn
+npm i
 ```
 
 ## Arweave Setup
