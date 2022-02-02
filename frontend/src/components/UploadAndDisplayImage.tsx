@@ -39,10 +39,10 @@ const UploadAndDisplayImage = ({
                     const meta_txid = await uploadToArweave(
                       JSON.stringify({
                         description:
-                          "Functional NFT brings a new definition to NFT. Use functional NFT to sell on BGB website, you can define your NFT as anything. Whether you want to buy or sell artwork NFT, sell infrequently used antique furniture, or provide tutoring services ranging from 1 to 2 hours, you can achieve it through TinaDAO NFT.\n (※ Some physical goods and services may only be restricted to Taiwan).\nWebsite: https://zinstitute.net/🧚🏻",
-                        external_url: "https://zinstitute.net/🧚🏻/",
+                          "Functional NFT brings a new definition to NFT. Use functional NFT to sell on BGB website, you can define your NFT as anything. Whether you want to buy or sell artwork NFT, sell infrequently used antique furniture, or provide tutoring services ranging from 1 to 2 hours, you can achieve it through BGB functional NFT.\n (※ Some physical goods and services may only be restricted to Taiwan).\nWebsite: https://bgbbctec.com",
+                        external_url: "https://bgbbctec.com/",
                         image: `https://arweave.net/${img_txid!}`,
-                        name: "TinaDAO NFT",
+                        name: "BGB functional NFT",
                       }),
                       "application/json"
                     );

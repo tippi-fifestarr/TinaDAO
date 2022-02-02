@@ -35,7 +35,7 @@ contract TinaDAO is Ownable, ERC721A, EIP712 {
     StageInfo public stageInfo;
 
     // Maximum limit of tokens that can ever exist
-    uint16 private constant MAX_SUPPLY = 999;
+    uint16 private constant MAX_SUPPLY = 5;
 
     // Stage ID at public stage
     uint8 private constant PUBLIC_STAGE_ID = 2;

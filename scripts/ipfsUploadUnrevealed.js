@@ -3,6 +3,7 @@ const { create, globSource } = require("ipfs-http-client");
 const { createFolderIfNotExistAndReset } = require("./helper");
 
 const UNREVEALED_DIR = "./images/unrevealed";
+const CONFIG_PATH = "./scripts/config.json";
 
 async function main() {
   const ipfs = create({ url: "https://ipfs.infura.io:5001/api/v0" });
@@ -28,7 +29,6 @@ async function main() {
   createFolderIfNotExistAndReset(UNREVEALED_DIR);
 
   for (let i = 0; i < process.env.MAX_SUPPLY; ++i) {
-    // for (let i = 0; i < 5; ++i) {
     let metadata = metadataTemplate;
     metadata.name = `${process.env.ARG_NAME} #${i}`;
     metadata.image = cid;
@@ -36,10 +36,10 @@ async function main() {
   }
 
   const metadataCount = fs.readdirSync(UNREVEALED_DIR).length;
-  // if (metadataCount != process.env.MAX_SUPPLY) {
-  //   console.log("Files not uploaded completely, need to rerun this script.");
-  //   process.exit();
-  // }
+  if (metadataCount != process.env.MAX_SUPPLY) {
+    console.log("Files not uploaded completely, need to rerun this script.");
+    process.exit();
+  }
 
   console.log(
     `All data written to unrevealed folder, it now has ${metadataCount} files.`
@@ -56,6 +56,9 @@ async function main() {
     // Print the directory hash
     if (item.path === "") {
       console.log(`Folder CID: ${item.cid}`);
+      let configFile = JSON.parse(fs.readFileSync(CONFIG_PATH));
+      configFile.UNREVEALED_BASEURI = `ipfs://${item.cid}`;
+      fs.writeFileSync(CONFIG_PATH, JSON.stringify(configFile));
     }
 
     // item.cid;

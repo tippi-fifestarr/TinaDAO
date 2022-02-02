@@ -9,6 +9,7 @@ async function main() {
   const REVEALED_PATH = "./images/revealed";
   const PROCESSED_IMG_PATH = "./images/processed";
   const IMAGE_HASH_PATH = "./scripts/imageHash.json";
+  const CONFIG_PATH = "./scripts/config.json";
 
   const addOptions = {
     pin: true,
@@ -95,9 +96,10 @@ async function main() {
     // Print the directory hash
     if (item.path === "") {
       console.log(`Folder CID: ${item.cid}`);
+      let configFile = JSON.parse(fs.readFileSync(CONFIG_PATH));
+      configFile.REVEALED_BASEURI = `ipfs://${item.cid}`;
+      fs.writeFileSync(CONFIG_PATH, JSON.stringify(configFile));
     }
-
-    // item.cid;
   }
 }
 

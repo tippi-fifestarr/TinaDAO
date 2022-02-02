@@ -65,7 +65,7 @@ type MainState = {
   tokenUris: Array<string>;
   uploadedImgId: Array<string>;
   uploadedTxId: Array<string>;
-  erc721Data?: {
+  tinaDAOData?: {
     name: string;
     symbol: string;
   };
@@ -79,7 +79,7 @@ type MainState = {
   networkError?: string;
   provider?: ethers.providers.Web3Provider;
   token?: ethers.Contract;
-  erc721?: ethers.Contract;
+  tinaDAO?: ethers.Contract;
   pollDataInterval?: NodeJS.Timeout;
 };
 
@@ -89,7 +89,7 @@ const initialState: MainState = {
   uploadedTxId: [],
   uploadedImgId: [],
   tokenIds: [],
-  erc721Data: undefined,
+  tinaDAOData: undefined,
   selectedAddress: undefined,
   balance: undefined,
   txBeingSent: undefined,
@@ -97,7 +97,7 @@ const initialState: MainState = {
   networkError: undefined,
   provider: undefined,
   token: undefined,
-  erc721: undefined,
+  tinaDAO: undefined,
   pollDataInterval: undefined,
 };
 
@@ -143,7 +143,7 @@ export class Dapp extends React.Component<MainProps, MainState> {
 
     // If the token data or the user's balance hasn't loaded yet, we show
     // a loading component.
-    if (!this.state.erc721Data || !this.state.balance) {
+    if (!this.state.tinaDAOData || !this.state.balance) {
       return <Loading />;
     }
 
@@ -153,30 +153,43 @@ export class Dapp extends React.Component<MainProps, MainState> {
         <div className="row">
           <div className="col-12">
             <h1>
-              {this.state.erc721Data.name} ({this.state.erc721Data.symbol})
+              {this.state.tinaDAOData.name} ({this.state.tinaDAOData.symbol})
             </h1>
             <p>
               Welcome <b>{this.state.selectedAddress}</b>, you have{" "}
               <b>
-                {this.state.balance.toString()} {this.state.erc721Data.symbol}
+                {this.state.balance.toString()} {this.state.tinaDAOData.symbol}
               </b>
-              . Token IDs of my NFTs: {JSON.stringify(this.state.tokenIds, null, "")}
+              . Token IDs of my NFTs:{" "}
+              {JSON.stringify(this.state.tokenIds, null, "")}
             </p>
-            <Mint mintTokens={(receiver) => this._mintToken(receiver)} uploadedImgTxId={this.state.uploadedImgId} />
+            <Mint
+              mintTokens={(receiver) => this._mintToken(receiver)}
+              uploadedImgTxId={this.state.uploadedImgId}
+            />
             <br />
             <Transfer
-              transferTokens={(to, tokenId) => this._transferTokens(to, tokenId)}
-              batchTransferTokens={(to, tokenIds) => this._transferTokens(to, BigNumber.from(0), tokenIds)}
-              tokenSymbol={this.state.erc721Data.symbol}
+              transferTokens={(to, tokenId) =>
+                this._transferTokens(to, tokenId)
+              }
+              batchTransferTokens={(to, tokenIds) =>
+                this._transferTokens(to, BigNumber.from(0), tokenIds)
+              }
+              tokenSymbol={this.state.tinaDAOData.symbol}
               tokenIds={this.state.tokenIds}
             />
             <br />
             <UploadAndDisplayImage
-              uploadToArweave={(contentToUpload, fileType) => this._uploadToArweave(contentToUpload, fileType)}
+              uploadToArweave={(contentToUpload, fileType) =>
+                this._uploadToArweave(contentToUpload, fileType)
+              }
               updateState={(arTxIds) => this._updateStateFromMeta(arTxIds)}
             />
             <br />
-            <ViewAllNFT tokenUris={this.state.tokenUris} tokenIds={this.state.tokenIds} />
+            <ViewAllNFT
+              tokenUris={this.state.tokenUris}
+              tokenIds={this.state.tokenIds}
+            />
           </div>
         </div>
         <hr />
@@ -188,7 +201,9 @@ export class Dapp extends React.Component<MainProps, MainState> {
               for it to be mined.
               If we are waiting for one, we show a message here.
             */}
-            {this.state.txBeingSent && <WaitingForTransactionMessage txHash={this.state.txBeingSent} />}
+            {this.state.txBeingSent && (
+              <WaitingForTransactionMessage txHash={this.state.txBeingSent} />
+            )}
 
             {/* 
               Sending a transaction can fail in multiple ways. 
@@ -282,7 +297,11 @@ export class Dapp extends React.Component<MainProps, MainState> {
     // When, we initialize the contract using that provider and the token's
     // artifact. You can do this same thing with your contracts.
     this.setState({
-      erc721: new ethers.Contract(contractAddress.TinaDAO, TinaDAOArtifact.abi, _provider.getSigner(0)),
+      tinaDAO: new ethers.Contract(
+        contractAddress.TinaDAO,
+        TinaDAOArtifact.abi,
+        _provider.getSigner(0)
+      ),
     });
   }
 
@@ -312,21 +331,26 @@ export class Dapp extends React.Component<MainProps, MainState> {
   // The next two methods just read from the contract and store the results
   // in the component state.
   async _getContractData() {
-    const name = await this.state.erc721!.name();
-    const symbol = await this.state.erc721!.symbol();
+    const name = await this.state.tinaDAO!.name();
+    const symbol = await this.state.tinaDAO!.symbol();
 
-    this.setState({ erc721Data: { name, symbol } });
+    this.setState({ tinaDAOData: { name, symbol } });
   }
 
   async _updateBalance() {
-    const balance = await this.state.erc721!.balanceOf(this.state.selectedAddress);
+    const balance = await this.state.tinaDAO!.balanceOf(
+      this.state.selectedAddress
+    );
     this.setState({ balance });
 
     const tokenIds: Array<number> = [];
     const tokenUris: Array<string> = [];
 
     for (let i = 0; i < balance; i++) {
-      const tokenId = await this.state.erc721!.tokenOfOwnerByIndex(this.state.selectedAddress, i);
+      const tokenId = await this.state.tinaDAO!.tokenOfOwnerByIndex(
+        this.state.selectedAddress,
+        i
+      );
       const tokenUri = await this._showTokenUriFromTokenId(tokenId);
 
       tokenIds.push(tokenId.toNumber());
@@ -338,19 +362,33 @@ export class Dapp extends React.Component<MainProps, MainState> {
   // This method sends an ethereum transaction to transfer tokens.
   // While this action is specific to this application, it illustrates how to
   // send a transaction.
-  async _transferTokens(to: string, tokenId: BigNumber, tokenIds: BigNumber[] = []) {
+  async _transferTokens(
+    to: string,
+    tokenId: BigNumber,
+    tokenIds: BigNumber[] = []
+  ) {
     try {
       this._dismissTransactionError();
 
       let tx: any = {};
       if (tokenIds.length === 0) {
-        tx = await this.state.erc721!.transferFrom(this.state.selectedAddress, to, tokenId, {
-          gasLimit: 1000000,
-        });
+        tx = await this.state.tinaDAO!.transferFrom(
+          this.state.selectedAddress,
+          to,
+          tokenId,
+          {
+            gasLimit: 1000000,
+          }
+        );
       } else {
-        tx = await this.state.erc721!.batchTransferFrom(this.state.selectedAddress, to, tokenIds, {
-          gasLimit: 1000000,
-        });
+        tx = await this.state.tinaDAO!.batchTransferFrom(
+          this.state.selectedAddress,
+          to,
+          tokenIds,
+          {
+            gasLimit: 1000000,
+          }
+        );
       }
 
       this.setState({ txBeingSent: tx.hash });
@@ -382,7 +420,10 @@ export class Dapp extends React.Component<MainProps, MainState> {
     try {
       this._dismissTransactionError();
 
-      let transaction = await arweave.createTransaction({ data: contentToUpload }, AR_KEY);
+      let transaction = await arweave.createTransaction(
+        { data: contentToUpload },
+        AR_KEY
+      );
       transaction.addTag("Content-Type", _fileType);
 
       await arweave.transactions.sign(transaction, AR_KEY);
@@ -413,7 +454,7 @@ export class Dapp extends React.Component<MainProps, MainState> {
   async _showTokenUriFromTokenId(tokenId: number) {
     try {
       this._dismissTransactionError();
-      const tokenURI = await this.state.erc721!.tokenURI(tokenId);
+      const tokenURI = await this.state.tinaDAO!.tokenURI(tokenId);
       // console.log("tokenURI", tokenURI);
       const imgUri = await this._tokenUriToImg(tokenURI);
       // console.log(imgUri);
@@ -440,7 +481,9 @@ export class Dapp extends React.Component<MainProps, MainState> {
       let imageURLs = [];
       for (let i = 0; i < arTxIds.length; i++) {
         console.log(arTxIds[i]);
-        const imageURL = await this._tokenUriToImg(`https://arweave.net/${arTxIds[i]}`);
+        const imageURL = await this._tokenUriToImg(
+          `https://arweave.net/${arTxIds[i]}`
+        );
         imageURLs.push(imageURL);
       }
 
@@ -463,9 +506,17 @@ export class Dapp extends React.Component<MainProps, MainState> {
 
       let tx: any;
       if (this.state.uploadedTxId.length > 1) {
-        tx = await this.state.erc721!.batchMint(receiver, this.state.uploadedTxId, { gasLimit: 1000000 });
+        tx = await this.state.tinaDAO!.batchMint(
+          receiver,
+          this.state.uploadedTxId,
+          { gasLimit: 1000000 }
+        );
       } else if (this.state.uploadedTxId.length === 1) {
-        tx = await this.state.erc721!.mint(receiver, `${this.state.uploadedTxId[0]}`, { gasLimit: 1000000 });
+        tx = await this.state.tinaDAO!.mint(
+          receiver,
+          `${this.state.uploadedTxId[0]}`,
+          { gasLimit: 1000000 }
+        );
       } else return;
 
       this.setState({ txBeingSent: tx.hash });

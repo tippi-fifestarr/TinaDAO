@@ -2,6 +2,7 @@ const { artifacts, ethers, network } = require("hardhat");
 const { getTimestamp, parseEther } = require("./helper");
 const fs = require("fs");
 const contractsDir = __dirname + "/../frontend/src/contracts";
+const CONFIG_PATH = "./scripts/config.json";
 
 // This is a script for deploying your contracts. You can adapt it to deploy
 // yours, or create new ones.
@@ -29,7 +30,8 @@ async function main() {
   const symbol = process.env.ARG_SYMBOL;
   const maxSupply = process.env.MAX_SUPPLY;
 
-  const baseURI = "https://arweave.net/";
+  let configFile = JSON.parse(fs.readFileSync(CONFIG_PATH));
+  const baseURI = configFile.UNREVEALED_BASEURI;
   const stageId = 1;
   const startTime = 0;
   const endTime = getTimestamp(new Date(2022, 2 - 3, 21, 1, 30));

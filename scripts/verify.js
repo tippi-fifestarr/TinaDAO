@@ -1,11 +1,14 @@
 const hre = require("hardhat");
+const fs = require("fs");
 const { getTimestamp, parseEther } = require("./helper");
 const contractAddress = require("../frontend/src/contracts/contract-address.json");
+const CONFIG_PATH = "./scripts/config.json";
 
 const name = process.env.ARG_NAME;
 const symbol = process.env.ARG_SYMBOL;
 const maxSupply = process.env.MAX_SUPPLY;
-const baseURI = "https://arweave.net/";
+let configFile = JSON.parse(fs.readFileSync(CONFIG_PATH));
+const baseURI = configFile.UNREVEALED_BASEURI;
 
 const stageId = 1;
 const startTime = 0;
