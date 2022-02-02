@@ -1,6 +1,8 @@
 const fs = require("fs");
 const { create, globSource } = require("ipfs-http-client");
-const { createFolderIfNotExist } = require("./helper");
+const { createFolderIfNotExistAndReset } = require("./helper");
+
+const UNREVEALED_DIR = "./images/unrevealed";
 
 async function main() {
   const ipfs = create({ url: "https://ipfs.infura.io:5001/api/v0" });
@@ -16,13 +18,39 @@ async function main() {
 
   console.log("Metadata created:", metadataTemplate);
 
-  createFolderIfNotExist("./images/unrevealed/");
+  createFolderIfNotExistAndReset(UNREVEALED_DIR);
 
   for (let i = 0; i < process.env.MAX_SUPPLY; ++i) {
     let metadata = metadataTemplate;
     metadata.name = `${process.env.ARG_NAME} #${i}`;
     metadata.image = cid;
-    fs.writeFileSync(`./images/unrevealed/${i}`, JSON.stringify(metadata));
+    fs.writeFileSync(`${UNREVEALED_DIR}/${i}`, JSON.stringify(metadata));
+  }
+
+  const metadataCount = fs.readdirSync(UNREVEALED_DIR).length;
+  if (metadataCount != process.env.MAX_SUPPLY) {
+    console.log("Files not uploaded completely, need to rerun this script.");
+    process.exit();
+  }
+
+  console.log(
+    `All data written to unrevealed folder, it now has ${metadataCount} files.`
+  );
+
+  // upload the entire folder
+  const files = await ipfs.addAll(globSource(UNREVEALED_DIR, "**/*"), {
+    pin: true,
+    wrapWithDirectory: true,
+  });
+
+  console.log("IPFS: waiting for all unrevealed images to be uploaded...");
+  for await (const item of files) {
+    // Print the directory hash
+    if (item.path === "") {
+      console.log(
+        `Check the uploaded folder at: https://ipfs.io/ipfs/${item.cid}`
+      );
+    }
   }
 }
 main();

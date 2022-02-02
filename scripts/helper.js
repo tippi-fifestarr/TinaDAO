@@ -8,8 +8,11 @@ module.exports = {
   parseEther(ether) {
     return utils.parseEther(ether);
   },
-  createFolderIfNotExist(folderName) {
+  createFolderIfNotExistAndReset(folderName) {
     if (!fs.existsSync(folderName)) {
+      fs.mkdirSync(folderName);
+    } else {
+      fs.rmSync(folderName, { recursive: true });
       fs.mkdirSync(folderName);
     }
   },
