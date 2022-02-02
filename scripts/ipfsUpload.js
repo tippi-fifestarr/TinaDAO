@@ -7,10 +7,17 @@ const UNREVEALED_DIR = "./images/unrevealed";
 async function main() {
   const ipfs = create({ url: "https://ipfs.infura.io:5001/api/v0" });
   console.log("IPFS: waiting for unrevealed image to be uploaded...");
-  const { cid } = await ipfs.add(globSource("./images/beforeReveal.png", "*"), {
-    pin: true,
-  });
-  console.log(`IPFS: upload done, cid: ${cid}`);
+  const file = await ipfs.addAll(
+    globSource("./images/beforeReveal.png", "**/*"),
+    {
+      pin: true,
+    }
+  );
+  let cid;
+  for await (const item of file) {
+    cid = item.cid;
+    console.log(`IPFS: upload done, cid: ${item.cid}`);
+  }
 
   let metadataTemplate = JSON.parse(
     fs.readFileSync("./scripts/metadata-template.json")
@@ -20,7 +27,8 @@ async function main() {
 
   createFolderIfNotExistAndReset(UNREVEALED_DIR);
 
-  for (let i = 0; i < process.env.MAX_SUPPLY; ++i) {
+  for (let i = 0; i < 1; ++i) {
+    // for (let i = 0; i < process.env.MAX_SUPPLY; ++i) {
     let metadata = metadataTemplate;
     metadata.name = `${process.env.ARG_NAME} #${i}`;
     metadata.image = cid;
@@ -28,10 +36,10 @@ async function main() {
   }
 
   const metadataCount = fs.readdirSync(UNREVEALED_DIR).length;
-  if (metadataCount != process.env.MAX_SUPPLY) {
-    console.log("Files not uploaded completely, need to rerun this script.");
-    process.exit();
-  }
+  // if (metadataCount != process.env.MAX_SUPPLY) {
+  //   console.log("Files not uploaded completely, need to rerun this script.");
+  //   process.exit();
+  // }
 
   console.log(
     `All data written to unrevealed folder, it now has ${metadataCount} files.`
@@ -51,6 +59,8 @@ async function main() {
         `Check the uploaded folder at: https://ipfs.io/ipfs/${item.cid}`
       );
     }
+
+    // item.cid;
   }
 }
 main();
