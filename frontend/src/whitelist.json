@@ -1,0 +1,18 @@
+{
+    "0x76f838819f33606393e40a8188cf2b279cb98df6": {
+        "voucher": {
+            "redeemer": "0x76f838819F33606393E40A8188Cf2B279cB98dF6",
+            "stageId": 1,
+            "amount": 5
+        },
+        "signature": "0xf93a682bee674a97fa1611253c893d74c9aa28298250e124abdc74d12b418762369c11e7a539be7a39c042b601ddbc484def38849479cba0e4b87834e62eb27c1b"
+    },
+    "0x6454f3e56a842f883bc8f940b4f92a5b78e2e2d4": {
+        "voucher": {
+            "redeemer": "0x6454F3e56a842F883bC8F940B4f92a5B78E2e2D4",
+            "stageId": 1,
+            "amount": 5
+        },
+        "signature": "0xb2f0845cc58a6a789738d2a23f7c053fe5506ae613c6a2153c8a2d5330ae9a8e6fbe2d67e2f275a71bb5daae1ff119a9f7ca760a11e05ab525657b741294aca21c"
+    }
+}

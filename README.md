@@ -33,7 +33,7 @@ arkb deploy <path_to_file>
 ```shell
 brew install ipfs
 ipfs init
-npx hardhat run scripts/ipfsUploadUnrevealed.js
+ipfs add <path_to_file>
 ```
 
 ## Running the Project (Rinkeby testnet)
@@ -52,9 +52,11 @@ ETHERSCAN_API='yo'
 POLYGONSCAN_API=''
 ARG_NAME='TinaDAO'
 ARG_SYMBOL='TINA'
+ARG_ENDTIME='Feb 3 2022 19:00:00 GMT+0800'
+MAX_SUPPLY=5
 ```
 
-4. Create a file named `.env` from `.env.example` under `/frontend` with the following content:
+4. Create a file named `.env` from `.env.example` under `/frontend` with the following content (Rinkeby testnet has a chain ID 4):
 
 ```bash
 SKIP_PREFLIGHT_CHECK=true
@@ -62,9 +64,11 @@ REACT_APP_CHAIN_ID=4
 REACT_APP_AR_KEY={your_AR_key}
 ```
 
-1. Deploy contract with `npx hardhat run scripts/deploy.js --network rinkeby`
-1. Wait one minute until the contract has been included on Etherscan and verify contract with `npx hardhat run scripts/verify.js --network rinkeby`
-1. Change minter address in `scripts/whitelist.js` and whitelist minter with `npx hardhat run scripts/whitelist.js --network rinkeby`
+1. Add all of your NFT images to `images/raw` folder and `beforeReveal.png` for blind boxes.
+1. Upload images to IPFS with `npx hardhat run scripts/1_ipfsUploadUnrevealed.js`
+1. Deploy contract with `npx hardhat run scripts/2_deploy.js --network rinkeby`
+1. Wait one minute until the contract has been included on Etherscan and verify contract with `npx hardhat run scripts/3_verify.js --network rinkeby`
+1. Edit `scripts/whitelist.txt` with whitelisted addresses and run `npx hardhat run scripts/4_signWhitelistVouchers.js --network rinkeby` to pre-sign and save the signatures.
 
 1. Run frontend with `cd frontend && yarn && yarn start`
 1. Switch to Rinkeby testnet on MetaMask

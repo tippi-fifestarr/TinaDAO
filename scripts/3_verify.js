@@ -12,7 +12,7 @@ const baseURI = configFile.UNREVEALED_BASEURI;
 
 const stageId = 1;
 const startTime = 0;
-const endTime = getTimestamp(new Date(2022, 2 - 3, 21, 1, 30));
+const endTime = getTimestamp(new Date(process.env.ARG_ENDTIME));
 const mintPrice = parseEther("0.1");
 
 const stageInfo = {

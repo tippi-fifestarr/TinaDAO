@@ -65,7 +65,7 @@ contract TinaDAO is Ownable, ERC721A, EIP712 {
         string memory _baseTokenURI
     ) ERC721A(_name, _symbol) EIP712(_name, "1") { // version 1
         stageInfo = _initStageInfo;
-        _baseTokenURI = _baseTokenURI;
+        baseTokenURI = _baseTokenURI;
     }
 
     function contractURI() public pure returns (string memory) {

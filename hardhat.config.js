@@ -11,8 +11,6 @@ require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-truffle5");
 require("dotenv").config();
 
-const fs = require("fs");
-const path = require("path");
 const argv = require("yargs/yargs")()
   .env("")
   .options({
