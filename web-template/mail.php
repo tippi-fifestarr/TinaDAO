@@ -29,7 +29,7 @@ if ($name == "") {
     $msg['code'] = FALSE;
 } else {
     $to = 'nipabali@gmail.com';
-    $subject = 'Nuron Contact Query';
+    $subject = 'TinaDAO Contact Query';
     $_message = '<html><head></head><body>';
     $_message .= '<p>Name: ' . $name . '</p>';
     $_message .= '<p>Message: ' . $phone . '</p>';
@@ -39,7 +39,7 @@ if ($name == "") {
 
     $headers = 'MIME-Version: 1.0' . "\r\n";
     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-    $headers .= 'From:  Nuron <nipabali@gmail.com>' . "\r\n";
+    $headers .= 'From:  TinaDAO <nipabali@gmail.com>' . "\r\n";
     $headers .= 'cc: nipabali@gmail.com' . "\r\n";
     $headers .= 'bcc: nipabali@gmail.com' . "\r\n";
     mail($to, $subject, $_message, $headers, '-f nipabali@gmail.com');

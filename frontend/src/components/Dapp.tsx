@@ -7,9 +7,10 @@ import TinaDAOArtifact from "../contracts/TinaDAO.json";
 import WHITELIST from "../whitelist.json";
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
-import { ConnectWallet } from "./ConnectWallet";
 import { Loading } from "./Loading";
+import { Landing } from "./Landing";
 import { Mint } from "./Mint";
+import { Navbar } from "./Navbar";
 // All the logic of this dapp is contained in the Dapp component.
 // These other components are just presentational ones: they don't have any
 // logic. They just render HTML.
@@ -104,75 +105,72 @@ export class Dapp extends React.Component<MainProps, MainState> {
       return <NoWalletDetected />;
     }
 
-    // The next thing we need to do, is to ask the user to connect their wallet.
-    // When the wallet gets connected, we are going to save the users's address
-    // in the component's state. So, if it hasn't been saved yet, we have
-    // to show the ConnectWallet component.
-    //
-    // Note that we pass it a callback that is going to be called when the user
-    // clicks a button. This callback just calls the _connectWallet method.
-    if (!this.state.selectedAddress) {
-      return (
-        <ConnectWallet
-          connectWallet={() => this._connectWallet()}
-          networkError={this.state.networkError}
-          dismiss={() => this._dismissNetworkError()}
-        />
-      );
-    }
-
-    // If the token data or the user's balance hasn't loaded yet, we show
-    // a loading component.
-    if (!this.state.tinaDAOData || !this.state.balance) {
-      return <Loading />;
-    }
-
     // If everything is loaded, we render the application.
     return (
-      <div className="container p-4">
-        <div className="row">
-          <div className="col-12">
-            <h1>
-              {this.state.tinaDAOData.name} ({this.state.tinaDAOData.symbol})
-            </h1>
-            <p>
-              Welcome <b>{this.state.selectedAddress}</b>, you have{" "}
-              <b>
-                {this.state.balance.toString()} {this.state.tinaDAOData.symbol}
-              </b>
-              . Token IDs of my NFTs:{" "}
-              {JSON.stringify(this.state.tokenIds, null, "")}
-            </p>
-            <Mint mintTokens={(receiver) => this._mintToken(receiver)} />
-            <br />
-          </div>
-        </div>
-        <hr />
-
-        <div className="row">
-          <div className="col-12">
-            {/* 
+      <>
+        <Navbar
+          selectedAddress={this.state.selectedAddress}
+          networkError={this.state.networkError}
+          _dismissNetworkError={this._dismissNetworkError}
+          _connectWallet={() => this._connectWallet()}
+          balance={this.state.balance ? this.state.balance.toString() : "-"}
+          symbol={this.state.tinaDAOData ? this.state.tinaDAOData.symbol : ""}
+          tokenIds={JSON.stringify(this.state.tokenIds, null, "")}
+        />
+        <Landing />
+        <div className="container p-4">
+          {this.state.selectedAddress && (
+            <>
+              {!(this.state.tinaDAOData && this.state.balance) ? (
+                <Loading />
+              ) : (
+                <>
+                  <div className="row">
+                    <div className="col-12">
+                      <h1>
+                        {this.state.tinaDAOData.name} (
+                        {this.state.tinaDAOData.symbol})
+                      </h1>
+                      <Mint
+                        mintTokens={(receiver) => this._mintToken(receiver)}
+                      />
+                      <br />
+                    </div>
+                  </div>
+                  <hr />
+                  <div className="row">
+                    <div className="col-12">
+                      {/* 
               Sending a transaction isn't an immidiate action. You have to wait
               for it to be mined.
               If we are waiting for one, we show a message here.
             */}
-            {this.state.txBeingSent && (
-              <WaitingForTransactionMessage txHash={this.state.txBeingSent} />
-            )}
+                      {this.state.txBeingSent && (
+                        <WaitingForTransactionMessage
+                          txHash={this.state.txBeingSent}
+                        />
+                      )}
 
-            {/* 
+                      {/* 
               Sending a transaction can fail in multiple ways. 
               If that happened, we show a message here.
             */}
-            {this.state.transactionError && (
-              <TransactionErrorMessage
-                message={this._getRpcErrorMessage(this.state.transactionError)}
-                dismiss={() => this._dismissTransactionError()}
-              />
-            )}
-          </div>
+                      {this.state.transactionError && (
+                        <TransactionErrorMessage
+                          message={this._getRpcErrorMessage(
+                            this.state.transactionError
+                          )}
+                          dismiss={() => this._dismissTransactionError()}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
+          )}
         </div>
-      </div>
+      </>
     );
   }
 
