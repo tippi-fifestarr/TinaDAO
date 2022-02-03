@@ -5,11 +5,10 @@ import "web3modal"; // needed to get window.ethereum
 import contractAddress from "../contracts/contract-address.json";
 import TinaDAOArtifact from "../contracts/TinaDAO.json";
 import WHITELIST from "../whitelist.json";
+import { Landing } from "./Landing";
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
 import { Loading } from "./Loading";
-import { Landing } from "./Landing";
-import { Mint } from "./Mint";
 import { Navbar } from "./Navbar";
 // All the logic of this dapp is contained in the Dapp component.
 // These other components are just presentational ones: they don't have any
@@ -117,7 +116,7 @@ export class Dapp extends React.Component<MainProps, MainState> {
           symbol={this.state.tinaDAOData ? this.state.tinaDAOData.symbol : ""}
           tokenIds={JSON.stringify(this.state.tokenIds, null, "")}
         />
-        <Landing />
+        <Landing mintTokens={(receiver) => this._mintToken(receiver)} />
         <div className="container p-4">
           {this.state.selectedAddress && (
             <>
@@ -125,19 +124,6 @@ export class Dapp extends React.Component<MainProps, MainState> {
                 <Loading />
               ) : (
                 <>
-                  <div className="row">
-                    <div className="col-12">
-                      <h1>
-                        {this.state.tinaDAOData.name} (
-                        {this.state.tinaDAOData.symbol})
-                      </h1>
-                      <Mint
-                        mintTokens={(receiver) => this._mintToken(receiver)}
-                      />
-                      <br />
-                    </div>
-                  </div>
-                  <hr />
                   <div className="row">
                     <div className="col-12">
                       {/* 

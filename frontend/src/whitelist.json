@@ -5,7 +5,7 @@
             "stageId": 1,
             "amount": 5
         },
-        "signature": "0x4f9dfcfb62daeb013b4dc7ee2fda589d0fa052cac450e5d52e1c59b068e63385117f27a67ff7c6ed36cab4dad1f568f7b554848455da2f705b3f442c72949a361c"
+        "signature": "0xba36a4c2c1bf2b339e0587478d09e9b0cd41c8b5f6700b8a07bfda39ce41bc51194e47647b4c30703095088f810515a048a15f000b818cf19a0f225a35c943941c"
     },
     "0x6454f3e56a842f883bc8f940b4f92a5b78e2e2d4": {
         "voucher": {
@@ -13,6 +13,6 @@
             "stageId": 1,
             "amount": 1
         },
-        "signature": "0x1f3bab0b5badf8e5b40e53e208ce181ade9da1dc9aa4a5b34518cf40c88bf61a5d54eaa2e68b78f6b8cc70e4c56537fbf49fc287356bed93fa0e7143b1413a621b"
+        "signature": "0x4bda1e88a108045efe6a5d8bd98c3e9ec3c6214c1e1a3c39a75edd515b0a594941a530b413315dc07c5dc2f36197aa81c2278e096484fa8755252cf5ef99e1601b"
     }
 }

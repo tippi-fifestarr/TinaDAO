@@ -1,6 +1,11 @@
 import React from "react";
+import { Mint } from "./Mint";
 
-export function Landing() {
+export function Landing({
+  mintTokens,
+}: {
+  mintTokens: (arg0: string) => Promise<void>;
+}) {
   return (
     <div className="slider-one rn-section-gapTop">
       <div className="container">
@@ -22,16 +27,15 @@ export function Landing() {
             >
               The First NFT Project Which the Model is the Dev&nbsp;Behind.
             </p>
-            <div className="button-group">
+            <Mint mintTokens={mintTokens} />
+            {/* <div className="button-group">
               <a
                 className="btn btn-large btn-primary"
                 href="#"
                 data-sal-delay={400}
                 data-sal="slide-up"
                 data-sal-duration={800}
-              >
-                Mint Now
-              </a>
+              ></a>
               <a
                 className="btn btn-large btn-primary-alta"
                 href="create.html"
@@ -41,7 +45,7 @@ export function Landing() {
               >
                 Create
               </a>
-            </div>
+            </div> */}
           </div>
           <div className="col-lg-5 col-md-6 col-sm-12 offset-lg-1">
             <div className="slider-thumbnail">

@@ -1,5 +1,4 @@
 import React from "react";
-
 import { NetworkErrorMessage } from "./NetworkErrorMessage";
 
 export function ConnectWallet({
@@ -14,7 +13,7 @@ export function ConnectWallet({
   return (
     <div className="container">
       <div className="row justify-content-md-center">
-        <div className="col-12 text-center">
+        <div className="text-center">
           {/* Metamask network should be set to Localhost:8545. */}
           {networkError && (
             <NetworkErrorMessage message={networkError} dismiss={dismiss} />
@@ -24,6 +23,7 @@ export function ConnectWallet({
           <button
             className="btn btn-warning"
             type="button"
+            style={{ whiteSpace: "nowrap" }}
             onClick={connectWallet}
           >
             Connect Wallet

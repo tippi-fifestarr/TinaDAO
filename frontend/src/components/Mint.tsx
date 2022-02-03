@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
+import Slider from "react-smooth-range-input";
 
 export function Mint({
   mintTokens,
 }: {
   mintTokens: (arg0: string) => Promise<void>;
 }) {
+  let [mintCount, setMintCount] = useState(1);
   return (
-    <div>
-      <h4>Mint</h4>
+    <div data-sal-delay={400} data-sal="slide-up" data-sal-duration={800}>
       <form
         onSubmit={(event) => {
           // This function just calls the transferTokens callback with the
@@ -15,7 +16,9 @@ export function Mint({
           event.preventDefault();
 
           const formData = new FormData(event.target as HTMLFormElement);
-          const receiver = formData.get("receiver") as string;
+          // const receiver = formData.get("receiver") as string;
+          const receiver = mintCount.toString();
+          console.log(receiver);
 
           if (receiver) {
             mintTokens(receiver);
@@ -23,12 +26,21 @@ export function Mint({
         }}
       >
         <div className="form-group">
-          <label>Choose how many NFTs to mint:</label>
-
-          <select
-            className="form-control"
+          {/* <label>Choose how many NFTs to mint:</label> */}
+          <Slider
+            value={1}
+            onChange={(val) => {
+              console.log(val);
+              setMintCount(val);
+            }}
+            min={1}
+            max={5}
+            barHeight={10}
+            hasTickMarks={false}
+          />
+          {/* <select
+            className="form-select"
             id="receiver"
-            name="receiver"
             defaultValue="1"
             required
           >
@@ -47,11 +59,15 @@ export function Mint({
             <option value="5" key="5">
               5
             </option>
-          </select>
+          </select> */}
         </div>
         <br />
-        <div className="form-group">
-          <input className="btn btn-primary" type="submit" value="Mint" />
+        <div className="form-group mt-5">
+          <input
+            className="btn btn-large btn-primary-alta sal-animate"
+            type="submit"
+            value="Mint"
+          />
         </div>
       </form>
     </div>
